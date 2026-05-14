@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Internal Product Knowledge</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+
+  <style>
+  body { font-family: Inter, sans-serif; }
+
+  .sku-card {
+    transition: all .25s ease;
+    height: 480px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .sku-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 25px 30px rgba(0,0,0,.1);
+  }
+
+  #skuGrid {
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  }
+
+  .line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .sku-id {
+    background: linear-gradient(135deg, #10b981, #059669);
+    color: white;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+  }
+
+  /* Background Login dengan foto */
+  #loginPage {
+    background-image: url('https://i.ibb.co.com/SDQLxqCs/Screenshot-2026-05-14-063733.png'); /* Ganti dengan link foto */
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+  }
+</style>
+</head>
+
+<body class="bg-gray-100 text-gray-800">
+
+     <!-- LOGIN PAGE -->
+  <div id="loginPage" class="fixed inset-0 bg-cover bg-center bg-no-repeat flex items-center justify-center z-50"
+       style="background-image: url('https://i.ibb.co.com/5g5yJZjh/Screenshot-2026-05-14-063733.png')">
+    
+    <!-- Overlay Gelap -->
+    <div class="absolute inset-0 bg-black/70"></div>
+
+    <!-- Login Box -->
+    <div class="bg-white/95 backdrop-blur-lg rounded-3xl shadow-2xl w-full max-w-md mx-4 p-8 relative z-10">
+      <div class="text-center mb-8">
+        <div class="w-20 h-20 mx-auto bg-white rounded-2xl flex items-center justify-center p-2 shadow-lg mb-4">
+          <img src="https://i.ibb.co.com/0yMBxf8H/LMN-2-JPG.jpg" 
+               class="w-16 h-16 object-contain" alt="Logo">
+        </div>
+        <h1 class="text-3xl font-bold text-gray-800">Hi! Welcome Back</h1>
+        <p class="text-gray-600 mt-1">Please enter your detail</p>
+      </div>
+
+      <div class="space-y-5">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+          <input type="email" id="loginEmail" 
+            class="w-full border border-gray-300 rounded-2xl px-5 py-4 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-base"
+            placeholder="nama@perusahaan.com">
+        </div>
+        
+        <button onclick="attemptLogin()" 
+          class="w-full bg-emerald-600 hover:bg-emerald-700 text-white py-4 rounded-2xl font-semibold text-lg transition-all active:scale-95">
+          Masuk
+        </button>
+      </div>
+
+      <p class="text-center text-xs text-gray-500 mt-6">
+        Hanya untuk Tim Internal
+      </p>
+    </div>
+  </div>
+
+  <!-- MAIN CONTENT -->
+  <div id="mainContent" class="hidden">
+
+    <!-- HEADER -->
+   <header class="bg-white shadow-sm sticky top-0 z-40 border-b">
+  <div class="max-w-7xl mx-auto px-6 py-5">
+    <div class="flex justify-between items-center">
+      <div>
+        <h1 class="text-3xl font-bold text-gray-900">Internal Product Knowledge</h1>
+        <p class="text-gray-600 mt-0.5">PT Lahan Mekar Niaga</p>
+      </div>
+      
+      <div class="flex items-center gap-8">
+        <div class="text-sm text-gray-500">
+          Updated: <span class="text-emerald-600 font-medium">May 2026</span>
+        </div>
+        
+        <button onclick="logout()" 
+          class="flex items-center gap-2 px-5 py-2.5 text-red-600 hover:bg-red-50 rounded-2xl transition-all">
+          <i class="fa-solid fa-right-from-bracket"></i>
+          Logout
+        </button>
+      </div>
+    </div>
+  </div>
+</header>
+
+    <!-- CONTENT -->
+    <div class="max-w-7xl mx-auto px-6 py-8">
+      <!-- FILTER -->
+      <div class="bg-white rounded-3xl shadow-sm p-6 mb-8">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+          <div class="lg:col-span-2">
+            <label class="text-sm font-medium mb-2 block">Search SKU</label>
+            <div class="relative">
+              <i class="fa-solid fa-search absolute left-4 top-4 text-gray-400"></i>
+              <input type="text" id="searchInput" placeholder="Cari SKU atau nama produk..."
+                class="w-full border rounded-2xl pl-12 pr-4 py-3 focus:outline-none focus:ring-2 focus:ring-emerald-500"/>
+            </div>
+          </div>
+          <div>
+            <label class="text-sm font-medium mb-2 block">Brand</label>
+            <select id="brandFilter" class="w-full border rounded-2xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+              <option value="">Semua</option>
+            </select>
+          </div>
+          <div>
+            <label class="text-sm font-medium mb-2 block">Kemasan</label>
+            <select id="packageFilter" class="w-full border rounded-2xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+              <option value="">Semua</option>
+              <option value="Botol Kaca">Botol Kaca</option>
+              <option value="PET">PET</option>
+              <option value="Pouch">Pouch</option>
+              <option value="Refill">Refill</option>
+              <option value="Sachet">Sachet</option>
+              <option value="Jerigen">Jerigen</option>
+            </select>
+          </div>
+          <div>
+            <label class="text-sm font-medium mb-2 block">PCS/Dus</label>
+            <select id="pcsFilter" class="w-full border rounded-2xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+              <option value="">Semua</option>
+              <option value="6">6</option>
+              <option value="12">12</option>
+              <option value="24">24</option>
+              <option value="48">48</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- SKU GRID -->
+      <div id="skuGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6"></div>
+    </div>
+  </div>
+
+  <!-- MODAL & DUS POPUP -->
+  <div id="productModal" class="hidden fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl w-full max-w-5xl max-h-[95vh] overflow-y-auto modal-enter">
+      <div class="flex items-center justify-between p-6 border-b">
+        <h2 class="text-2xl font-bold">Detail Produk</h2>
+        <button onclick="closeModal()" class="w-10 h-10 rounded-full bg-gray-100 hover:bg-gray-200">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+      <div id="modalContent"></div>
+    </div>
+  </div>
+
+  <div id="dusModal" class="hidden fixed inset-0 bg-black/90 z-[60] flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl w-full max-w-4xl overflow-hidden">
+      <div class="flex justify-between items-center px-6 py-4 border-b">
+        <h3 class="font-semibold text-lg">Gambar Dus / Packaging</h3>
+        <button onclick="closeDusModal()" class="text-3xl leading-none hover:text-gray-400">×</button>
+      </div>
+      <div class="p-6 bg-gray-50 flex items-center justify-center">
+        <img id="dusImageDisplay" class="max-h-[75vh] rounded-2xl shadow-lg" alt="Gambar Dus">
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ================== LOGIN SYSTEM ==================
+    const allowedEmails = [
+      "sales@perusahaan.com",
+      "admin@perusahaan.com",
+      "febrinita@lahangroup.com",
+      "wahyudi@lahanniaga.com",
+      // Tambahkan email lain di sini
+    ];
+
+    function attemptLogin() {
+      const emailInput = document.getElementById('loginEmail').value.trim().toLowerCase();
+      
+      if (emailInput === "" || (!allowedEmails.includes(emailInput) && !emailInput.endsWith("@perusahaan.com"))) {
+        alert("Email tidak terdaftar. Silakan hubungi administrator.");
+        return;
+      }
+
+      localStorage.setItem('isLoggedIn', 'true');
+      localStorage.setItem('userEmail', emailInput);
+      
+      document.getElementById('loginPage').classList.add('hidden');
+      document.getElementById('mainContent').classList.remove('hidden');
+      
+      // Load katalog setelah login
+      loadProducts();
+    }
+
+    function logout() {
+      if (confirm("Yakin ingin keluar?")) {
+        localStorage.removeItem('isLoggedIn');
+        localStorage.removeItem('userEmail');
+        location.reload();
+      }
+    }
+
+    function checkLogin() {
+      if (localStorage.getItem('isLoggedIn') === 'true') {
+        document.getElementById('loginPage').classList.add('hidden');
+        document.getElementById('mainContent').classList.remove('hidden');
+      }
+    }
+
+    // ================== KATALOG (Fungsi lama tetap sama) ==================
+    let products = [];
+    const API_URL = 'https://script.google.com/macros/s/AKfycbzXfbneiUWSoR6M_f2LvF8lC6-2sMeuBbaL4M9xRUhTIeEi1A9vq00THuGaBMdEL6oN_Q/exec';
+
+    const skuGrid = document.getElementById('skuGrid');
+    const productModal = document.getElementById('productModal');
+    const modalContent = document.getElementById('modalContent');
+    const dusModal = document.getElementById('dusModal');
+    const dusImageDisplay = document.getElementById('dusImageDisplay');
+
+    function initBrandFilter() {
+      const brandFilter = document.getElementById('brandFilter');
+      const brands = [...new Set(products.map(p => p.brand))].sort();
+      brands.forEach(brand => {
+        const option = document.createElement('option');
+        option.value = brand;
+        option.textContent = brand;
+        brandFilter.appendChild(option);
+      });
+    }
+
+    function renderProducts(data) {
+      skuGrid.innerHTML = '';
+
+      if (data.length === 0) {
+        skuGrid.innerHTML = `<div class="col-span-full flex items-center justify-center py-20"><div class="bg-white rounded-3xl p-10 text-center"><div class="text-6xl mb-4">📦</div><div class="text-xl font-semibold text-gray-600">Produk tidak ditemukan</div></div></div>`;
+        return;
+      }
+
+      data.forEach(product => {
+        skuGrid.innerHTML += `
+          <div onclick='openModal(${JSON.stringify(product)})' class="sku-card cursor-pointer bg-white rounded-3xl overflow-hidden shadow-sm border border-gray-100 hover:border-emerald-200">
+            <div class="h-80 bg-gray-50 flex items-center justify-center p-6 border-b flex-shrink-0">
+              <img src="${product.image}" class="w-full h-full object-contain" loading="lazy" 
+                   onerror="this.src='https://via.placeholder.com/600x600/EAEAEA/666666?text=No+Image';">
+            </div>
+            <div class="p-5 flex-1 flex flex-col">
+              <div class="flex justify-between items-start mb-3">
+                <div class="sku-id text-sm px-4 py-1.5 rounded-2xl shadow-sm">
+                  ${product.id}
+                </div>
+                <div class="bg-emerald-100 text-emerald-700 text-xs px-3 py-1 rounded-full font-medium">
+                  ${product.brand}
+                </div>
+              </div>
+              <h3 class="font-bold text-base leading-tight mb-2 line-clamp-2">${product.name}</h3>
+              <p class="text-gray-500 text-sm">${product.category}</p>
+            </div>
+          </div>
+        `;
+      });
+    }
+
+    function openModal(product) {
+      modalContent.innerHTML = `
+        <div class="p-6 md:p-8">
+          <div class="flex flex-col md:flex-row gap-8">
+            <div class="md:w-1/2 bg-gray-50 rounded-3xl p-8 flex items-center justify-center">
+              <img src="${product.image}" class="max-h-[420px] w-full object-contain" alt="${product.name}">
+            </div>
+            <div class="md:w-1/2 space-y-6">
+              <div>
+                <div class="inline-flex px-4 py-2 rounded-full bg-emerald-100 text-emerald-700 font-medium">${product.brand}</div>
+                <h1 class="text-3xl font-bold mt-3">${product.name}</h1>
+                <p class="text-emerald-600 font-mono text-lg">${product.id}</p>
+              </div>
+              <div class="grid grid-cols-2 gap-4">
+                <div class="bg-gray-50 rounded-2xl p-5"><div class="text-sm text-gray-500">Kategori</div><div class="font-semibold">${product.category}</div></div>
+                <div class="bg-gray-50 rounded-2xl p-5"><div class="text-sm text-gray-500">PCS/Dus</div><div class="font-semibold">${product.pcs}</div></div>
+              </div>
+              <div class="space-y-4">
+                <div><div class="text-sm text-gray-500">Barcode</div><div class="font-semibold">${product.barcode || '-'}</div></div>
+                <div><div class="text-sm text-gray-500">Harga Per Pcs</div><div class="font-semibold text-emerald-700 text-2xl">${product.het || '-'}</div></div>
+                <div><div class="text-sm text-gray-500">Cabang Distribusi</div><div class="font-semibold">${product.channel || '-'}</div></div>
+              </div>
+
+              ${product.dusImage ? `
+              <div class="pt-4">
+                <button onclick="showDusImage('${product.dusImage}'); closeModal();" 
+                  class="w-full bg-emerald-600 hover:bg-emerald-700 text-white py-4 rounded-2xl text-base font-medium flex items-center justify-center gap-3">
+                  <i class="fa-solid fa-box"></i> Lihat Gambar Dus / Packaging
+                </button>
+              </div>` : ''}
+
+              ${product.advantage ? `
+              <div>
+                <div class="text-sm text-gray-500 mb-2">Keunggulan Produk</div>
+                <div class="bg-emerald-50 text-emerald-800 rounded-2xl p-5">${product.advantage}</div>
+              </div>` : ''}
+            </div>
+          </div>
+        </div>
+      `;
+      productModal.classList.remove('hidden');
+    }
+
+    function closeModal() { productModal.classList.add('hidden'); }
+    function showDusImage(url) {
+      dusImageDisplay.src = url;
+      dusModal.classList.remove('hidden');
+    }
+    function closeDusModal() { dusModal.classList.add('hidden'); }
+
+    function filterProducts() {
+      const search = document.getElementById('searchInput').value.toLowerCase().trim();
+      const brand = document.getElementById('brandFilter').value;
+      const packageType = document.getElementById('packageFilter').value;
+      const pcs = document.getElementById('pcsFilter').value;
+
+      const filtered = products.filter(product => {
+        const matchSearch = !search || 
+          (product.name || '').toLowerCase().includes(search) ||
+          (product.brand || '').toLowerCase().includes(search) ||
+          (product.id || '').toLowerCase().includes(search);
+        const matchBrand = !brand || product.brand === brand;
+        const matchPackage = !packageType || product.category === packageType;
+        const matchPcs = !pcs || String(product.pcs) === pcs;
+        return matchSearch && matchBrand && matchPackage && matchPcs;
+      });
+
+      renderProducts(filtered);
+    }
+
+    async function loadProducts() {
+      try {
+        skuGrid.innerHTML = `<div class="col-span-full flex items-center justify-center py-20"><div class="text-center"><div class="animate-spin w-10 h-10 border-4 border-emerald-200 border-t-emerald-600 rounded-full mx-auto"></div><p class="text-gray-500 mt-5">Memuat produk...</p></div></div>`;
+        
+        const response = await fetch(API_URL);
+        products = await response.json();
+        
+        initBrandFilter();
+        renderProducts(products);
+      } catch (error) {
+        console.error(error);
+        skuGrid.innerHTML = `<div class="col-span-full text-center py-20 text-red-500">Gagal memuat data produk</div>`;
+      }
+    }
+
+    // Event Listeners
+    document.getElementById('searchInput').addEventListener('input', filterProducts);
+    document.getElementById('brandFilter').addEventListener('change', filterProducts);
+    document.getElementById('packageFilter').addEventListener('change', filterProducts);
+    document.getElementById('pcsFilter').addEventListener('change', filterProducts);
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === "Escape") {
+        closeModal();
+        closeDusModal();
+      }
+    });
+
+    // Inisialisasi Awal
+    window.onload = () => {
+      checkLogin();
+    };
+  </script>
+</body>
+</html>
